@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coinflip</title>
+
+
+
+    <script src="//cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="tmi.js"></script>
+
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+    </script>
+</head>
+
+<body>
+    <div class="flex justify-center items-center h-screen">
+        <div id="main-div" class="p-2 bg-white rounded-lg w-fit flex flex-col items-center m-0">
+            <div id="coin">
+                <div class="side-a">HEADS</div>
+                <div class="side-b">TAILS</div>
+            </div>
+
+            <p id="result" class="mt-4 font-bold text-xl"></p>
+        </div>
+    </div>
+
+    <script>
+        function flipCoin() {
+            var flipResult = Math.random();
+            $("#coin").removeClass('heads tails');
+            setTimeout(() => {
+                if (flipResult <= 0.5) {
+                    $("#coin").addClass('heads');
+                    showResult('HEADS!')
+                } else {
+                    $("#coin").addClass('tails');
+                    showResult('TAILS!')
+                }
+            }, 100);
+        }
+
+        function showResult(text) {
+            setTimeout(() => {
+                $("#result").text(`Result: ${text}`)
+            }, 5 * 1000);
+
+            setTimeout(() => {
+                $("#result").text('')
+            }, 8 * 1000);
+        }
+
+        const client = new tmi.Client({
+            channels: [urlParams.get('streamer')]
+        });
+
+        client.connect();
+
+        client.on('message', (channel, tags, message, self) => {
+            if (message.startsWith('!coinflip')) {
+                $('#main-div').removeClass('invisible')
+
+                flipCoin()
+
+                setTimeout(() => {
+                    $('#main-div').addClass('invisible')
+                }, 8 * 1000)
+            }
+        });
+
+        setTimeout(() => {
+            $('#main-div').addClass('invisible')
+        }, 2 * 1000)
+
+    </script>
+</body>
+
+</html>
