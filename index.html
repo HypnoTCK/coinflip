@@ -58,7 +58,9 @@
 
         const client = new tmi.Client({
             channels: [urlParams.get('streamer')],
-            secure: true
+            connection: {
+                secure: true
+            }
         });
 
         client.connect();
