@@ -53,11 +53,12 @@
 
             setTimeout(() => {
                 $("#result").text('')
-            }, 8 * 1000);
+            }, 9 * 1000);
         }
 
         const client = new tmi.Client({
-            channels: [urlParams.get('streamer')]
+            channels: [urlParams.get('streamer')],
+            secure: true
         });
 
         client.connect();
@@ -70,7 +71,7 @@
 
                 setTimeout(() => {
                     $('#main-div').addClass('invisible')
-                }, 8 * 1000)
+                }, 9 * 1000)
             }
         });
 
