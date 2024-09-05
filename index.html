@@ -67,13 +67,15 @@
 
         client.on('message', (channel, tags, message, self) => {
             if (message.startsWith('!coinflip')) {
-                $('#main-div').removeClass('invisible')
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                    $('#main-div').removeClass('invisible')
 
-                flipCoin()
+                    flipCoin()
 
-                setTimeout(() => {
-                    $('#main-div').addClass('invisible')
-                }, 9 * 1000)
+                    setTimeout(() => {
+                        $('#main-div').addClass('invisible')
+                    }, 9 * 1000)
+                }
             }
         });
 
