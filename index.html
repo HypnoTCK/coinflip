@@ -4,57 +4,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coinflip</title>
-
-
-
+    <title>Coin Flip with Canvas</title>
     <script src="//cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="tmi.js"></script>
+    <link rel="stylesheet" href="style.css">
 
     <script>
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
     </script>
+    
+    <style>
+
+    </style>
 </head>
 
 <body>
-    <div class="flex justify-center items-center h-screen">
-        <div id="main-div" class="p-2 bg-white rounded-lg w-fit flex flex-col items-center m-0">
-            <div id="coin">
-                <div class="side-a">HEADS</div>
-                <div class="side-b">TAILS</div>
-            </div>
-
-            <p id="result" class="mt-4 font-bold text-xl"></p>
+    <div class="flex justify-center items-center h-screen p-2">
+        <div id="main-div" class="p-2 bg-white rounded-lg w-full flex flex-col items-center m-0">
+            <canvas id="coinCanvas" width="300" height="300"></canvas>
+            <p id="result"></p>
         </div>
     </div>
 
     <script>
-        function flipCoin() {
-            var flipResult = Math.random();
-            $("#coin").removeClass('heads tails');
-            setTimeout(() => {
-                if (flipResult <= 0.5) {
-                    $("#coin").addClass('heads');
-                    showResult('HEADS!')
+        let canvas = document.getElementById('coinCanvas');
+        let ctx = canvas.getContext('2d');
+        let flipResult;
+        let angle = 0;
+        let flipping = false;
+
+        let duration = 5000;
+
+        function drawCoin() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+
+            // rotate based on current angle
+            ctx.rotate(angle * Math.PI / 180);
+
+            if (!flipping) { // check if flipping
+                drawFlipping();
+            } else { // display correct coin
+                if (flipResult === 'HEADS') {
+                    drawHeads();
                 } else {
-                    $("#coin").addClass('tails');
-                    showResult('TAILS!')
+                    drawTails();
                 }
-            }, 100);
+            }
+
+            ctx.restore();
         }
 
-        function showResult(text) {
-            setTimeout(() => {
-                $("#result").text(`Result: ${text}`)
-            }, 5 * 1000);
-
-            setTimeout(() => {
-                $("#result").text('')
-            }, 9 * 1000);
+        function drawFlipping() {
+            ctx.beginPath();
+            ctx.arc(0, 0, 140, 0, 2 * Math.PI);
+            ctx.fillStyle = "#FFC107"; 
+            ctx.fill();
+            ctx.font = "48px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("FLIPPING", 0, 0);
+            ctx.closePath();
         }
+
+        function drawHeads() {
+            ctx.beginPath();
+            ctx.arc(0, 0, 140, 0, 2 * Math.PI);
+            ctx.fillStyle = "#4CAF50";
+            ctx.fill();
+            ctx.font = "48px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("HEADS", 0, 0);
+            ctx.closePath();
+        }
+
+        function drawTails() {
+            ctx.beginPath();
+            ctx.arc(0, 0, 140, 0, 2 * Math.PI);
+            ctx.fillStyle = "#F44336";
+            ctx.fill();
+            ctx.font = "48px Arial";
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("TAILS", 0, 0);
+            ctx.closePath();
+        }
+
+        function flipCoin() {
+            $('#main-div').removeClass('invisible')
+            $('#result').addClass('invisible')
+            flipping = false; 
+
+            flipResult = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
+
+            let startAngle = 0;
+            let endAngle = 1800;
+            let startTime = null;
+
+            function animateFlip(time) {
+                if (!startTime) startTime = time;
+                let elapsedTime = time - startTime;
+
+                let progress = Math.min(elapsedTime / duration, 1);
+                angle = startAngle + (endAngle - startAngle) * progress;
+
+                if (progress >= 0.5 && !flipping) {
+                    flipping = true;
+                }
+
+                drawCoin();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateFlip);
+                } else {
+                    // display result
+                    $('#result').removeClass('invisible')
+                    document.getElementById('result').textContent = `Result: ${flipResult}`;
+                }
+            }
+
+            requestAnimationFrame(animateFlip);
+        }
+    </script>
+
+    <script>
+        drawCoin()
 
         const client = new tmi.Client({
             channels: [urlParams.get('streamer')],
@@ -74,15 +156,16 @@
 
                     setTimeout(() => {
                         $('#main-div').addClass('invisible')
-                    }, 9 * 1000)
+                    }, duration + 5000) // keep results on screen for +5 second
                 }
             }
         });
 
+
         setTimeout(() => {
             $('#main-div').addClass('invisible')
         }, 2 * 1000)
-
+        
     </script>
 </body>
 
