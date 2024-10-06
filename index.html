@@ -21,13 +21,24 @@
 </head>
 
 <body>
-    <div class="flex justify-center items-center p-2 ">
-        <div id="main-div" class="bg-white rounded-lg w-8/12 max-h-[500px] items-center border border-blue-500">
-            <canvas id="coinCanvas" class="m-0" width="300" height="300"></canvas>
-            <p id="result"></p>
+    <div id="coin-div">
+        <div class="flex justify-center items-center p-2">
+            <div class="flex flex-col justify-center items-center bg-white rounded-lg w-8/12 max-h-[500px] h-screen items-center">
+                <canvas id="coinCanvas" class="m-0" width="300" height="300"></canvas>
+                <p id="result"></p>
+            </div>
         </div>
     </div>
 
+
+
+    <div class="flex justify-center items-center p-2">
+        <div id="image-div" class="hidden m-auto text-center">
+            <img id="image-tag" src="" class="max-w-8/12">
+        </div>
+    </div>
+
+    <!-- COIN FLIP SCRIPT -->
     <script>
         let canvas = document.getElementById('coinCanvas');
         let ctx = canvas.getContext('2d');
@@ -99,7 +110,7 @@
         }
 
         function flipCoin() {
-            $('#main-div').removeClass('invisible')
+            $('#coin-div').removeClass('invisible')
             $('#result').addClass('invisible')
             flipping = false; 
 
@@ -135,6 +146,31 @@
         }
     </script>
 
+    <!-- IMAGE SCRIPT -->
+     <script>
+        // image example: https://i.imgur.com/{id}.{ext}
+
+        function showImage(imageId){
+            const imageTag = $('#image-tag')
+            const imageDiv = $('#image-div')
+
+            const url =  `https://i.imgur.com/${imageId}`
+            console.log(url)
+
+            imageTag.attr("src", url);
+
+            imageDiv.removeClass('hidden')
+
+
+            setTimeout(() => {
+                imageDiv.addClass('hidden')
+            }, 4000);
+
+            
+        }
+     </script>
+
+    <!-- GENERAL SCRIPT -->
     <script>
         drawCoin()
 
@@ -150,20 +186,31 @@
         client.on('message', (channel, tags, message, self) => {
             if (message.startsWith('!coinflip')) {
                 if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
-                    $('#main-div').removeClass('invisible')
+                    $('#coin-div').removeClass('invisible')
 
                     flipCoin()
 
                     setTimeout(() => {
-                        $('#main-div').addClass('invisible')
+                        $('#coin-div').addClass('hidden')
                     }, duration + 5000) // keep results on screen for +5 second
+                }
+            }
+
+            if (message.startsWith('!image')) {
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                    var image = message.replace('!image', '').trim()
+
+                    if(image.startsWith('https://') || image.startsWith('https://i.imgur') || image.startsWith('https://i.imgur')) return
+                    else {
+                        showImage(image)
+                    }
                 }
             }
         });
 
 
         setTimeout(() => {
-            $('#main-div').addClass('invisible')
+            $('#coin-div').addClass('hidden')
         }, 2 * 1000)
         
     </script>

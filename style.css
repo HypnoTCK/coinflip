@@ -3,14 +3,6 @@
     height: 300px;
 }
 
-#main-div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
 #result {
     margin-top: 20px;
     font-weight: bold;
