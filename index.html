@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/spin-wheel@5.0.2/dist/spin-wheel-iife.js"></script>
     <script src="tmi.js"></script>
+    <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
 
     <script>
@@ -160,61 +161,22 @@
 
     <!-- WHEEL SCRIPT -->
      <script>
+        var items = []
         const wheelDiv = document.querySelector("#wheel-div")
         const wheelDuration = 4000;
 
-
         const props = {
             itemLabelFontSizeMax: 50,
-            items: [
-                {
-                    label: '1',
-                },
-                {
-                    label: '2',
-                    backgroundColor: '#4CAF50'
-                },
-                {
-                    label: '3',
-                },
-                {
-                    label: '4',
-                    backgroundColor: '#4CAF50'
-                },
-                {
-                    label: '5',
-                },
-                {
-                    label: '6',
-                    backgroundColor: '#4CAF50'
-                },
-                {
-                    label: '7',
-                },
-                {
-                    label: '8',
-                    backgroundColor: '#4CAF50'
-                },
-                {
-                    label: '9',
-                },
-                {
-                    label: '10',
-                    backgroundColor: '#4CAF50'
-                },
-            ]
-
         }
-
-        const wheel = new spinWheel.Wheel(wheelDiv, props);
 
         const pointer = document.createElement('img')
         pointer.src = "img/overlay.svg"
         // pointer.width = "20px"
 
-        wheel.overlayImage = pointer
-
-        async function spin_wheel(itemIndex) {
+        async function spin_wheel(itemIndex, items) {
+            props['items'] = items
+            const wheel = new spinWheel.Wheel(wheelDiv, props);
+            wheel.overlayImage = pointer
             wheel.spinToItem(itemIndex, wheelDuration, true, 2, 1)
         }
      </script>
@@ -236,23 +198,46 @@
 
             if (message.startsWith('!wheel')) { // !wheel command
                 if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
-                    wheelDiv.classList.remove('hidden')
-                    const result = Math.floor(Math.random() * props.items.length)
+                    wheelDiv.classList.remove("hidden")
+                    items = []
 
-                    spin_wheel(result)
+                    var args = message.replace('!wheel', '').trim().split(';')
+                    args = args.map(item => item.trim())
+
+                    if (args.length > 0 && args[0] !== ''){
+                        if (args.length > 1){
+                            args.forEach(item => {
+                                items.push({label: item})
+                            });
+                        } else if (args.length == 1 && isInt(args[0][0])){
+                            args = args[0][0] // bypass 'spam filter bypass' introduced by 7tv
+                            const range = parseInt(args)
+                            console.log(`range: ${range}`)
+                            if (range > 1 && range < 10){
+                                items = Array.from({ length: args }, (_, i) => ({ label: `${i + 1}`, ...(i % 2 === 1 ? { backgroundColor: '#4CAF50' } : {}) }));
+                            }
+                        }
+                    }
+
+                    if (items.length == 0){
+                        items = Array.from({ length: 10 }, (_, i) => ({ label: `${i + 1}`, ...(i % 2 === 1 ? { backgroundColor: '#4CAF50' } : {}) }));
+                    }
+
+                    var result = Math.ceil(Math.random() * items.length)
+
+                    spin_wheel(result, items)
 
                     setTimeout(() => {
                         const p = document.createElement('p')
                         p.classList.add("text-2xl", "font-bold", "bg-white")
-                        p.innerText = `Result: ${result + 1}`
+                        p.innerText = `Result: ${items[result].label}`
 
                         wheelDiv.appendChild(p)
                     }, wheelDuration + 300)
 
                     setTimeout(() => {
-                        wheelDiv.classList.add('hidden')
-
-                        wheelDiv.querySelector('p').remove()
+                        wheelDiv.classList.add("hidden")
+                        wheelDiv.innerHTML = ""
                     }, wheelDuration + 2000);
                 }
             }
