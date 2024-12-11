@@ -188,7 +188,7 @@
         const client = new tmi.Client({
             channels: [urlParams.get('streamer')],
             connection: {
-                secure: true
+                secure: false
             }
         });
 
@@ -242,6 +242,42 @@
                 }
             }
             
+            if (message.startsWith('!vipwheel')) { // !vipwheel command
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                    items = []
+
+                    for (var i = 0; i < 10; i++){
+                        if (i + 1 == 5){
+                            items.push({label: 'VIP + Refund', backgroundColor: '#E6A519'})
+                        } else if((i + 1) % 2 == 0) {
+                            items.push({label: 'VIP'})
+                        } else {
+                            items.push({label: 'BAN'})
+                        }
+                    }
+
+                    var result = Math.ceil(Math.random() * items.length)
+
+                    wheelDiv.classList.remove("hidden")
+
+                    spin_wheel(result, items)
+
+                    setTimeout(() => {
+                        const p = document.createElement('p')
+                        p.classList.add("text-2xl", "font-bold", "bg-white")
+                        p.innerText = `Result: ${items[result].label}`
+
+                        wheelDiv.appendChild(p)
+                    }, wheelDuration + 300)
+
+                    setTimeout(() => {
+                        wheelDiv.classList.add("hidden")
+                        wheelDiv.innerHTML = ""
+                    }, wheelDuration + 2000);
+
+                }
+            }
+
             if (message.startsWith('!coinflip')) { // !coinflip command
                 if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
                     $('#coin-div').removeClass('hidden')

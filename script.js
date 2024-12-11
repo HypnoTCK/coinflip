@@ -6,4 +6,4 @@ function isInt(num) {
       return Number.isFinite ? Number.isFinite(+num) : isFinite(+num);
     }
     return false;
-  };
+};
