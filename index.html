@@ -213,7 +213,7 @@
                             args = args[0][0] // bypass 'spam filter bypass' introduced by 7tv
                             const range = parseInt(args)
                             console.log(`range: ${range}`)
-                            if (range > 1 && range < 10){
+                            if (range > 1 && range <= 10){
                                 items = Array.from({ length: args }, (_, i) => ({ label: `${i + 1}`, ...(i % 2 === 1 ? { backgroundColor: '#4CAF50' } : {}) }));
                             }
                         }
@@ -223,7 +223,7 @@
                         items = Array.from({ length: 10 }, (_, i) => ({ label: `${i + 1}`, ...(i % 2 === 1 ? { backgroundColor: '#4CAF50' } : {}) }));
                     }
 
-                    var result = Math.ceil(Math.random() * items.length)
+                    var result = Math.ceil((Math.random() * items.length) - 1)
 
                     spin_wheel(result, items)
 
@@ -256,7 +256,7 @@
                         }
                     }
 
-                    var result = Math.ceil(Math.random() * items.length)
+                    var result = Math.ceil((Math.random() * items.length) - 1)
 
                     wheelDiv.classList.remove("hidden")
 
