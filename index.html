@@ -162,6 +162,7 @@
     <!-- WHEEL SCRIPT -->
      <script>
         var items = []
+        var spinning = false
         const wheelDiv = document.querySelector("#wheel-div")
         const wheelDuration = 4000;
 
@@ -197,7 +198,8 @@
         client.on('message', (channel, tags, message, self) => {
 
             if (message.startsWith('!wheel')) { // !wheel command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" && spinning == false) {
+                    spinning = true
                     wheelDiv.classList.remove("hidden")
                     items = []
 
@@ -238,12 +240,14 @@
                     setTimeout(() => {
                         wheelDiv.classList.add("hidden")
                         wheelDiv.innerHTML = ""
+                        spinning = false
                     }, wheelDuration + 2000);
                 }
             }
             
             if (message.startsWith('!vipwheel')) { // !vipwheel command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" && spinning == false) {
+                    spinning = true
                     items = []
 
                     for (var i = 0; i < 10; i++){
@@ -273,19 +277,22 @@
                     setTimeout(() => {
                         wheelDiv.classList.add("hidden")
                         wheelDiv.innerHTML = ""
+                        spinning = false
                     }, wheelDuration + 2000);
 
                 }
             }
 
             if (message.startsWith('!coinflip')) { // !coinflip command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" && spinning == false) {
+                    spinning = true
                     $('#coin-div').removeClass('hidden')
 
                     flipCoin()
 
                     setTimeout(() => {
                         $('#coin-div').addClass('hidden')
+                        spinning = false
                     }, duration + 5000) // keep results on screen for +5 second
                 }
             }
