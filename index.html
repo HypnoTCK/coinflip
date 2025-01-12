@@ -7,10 +7,11 @@
     <title>Coin Flip</title>
     <script src="//cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/spin-wheel@5.0.2/dist/spin-wheel-iife.js"></script>
+    <script src="spin-wheel.js"></script>
     <script src="tmi.js"></script>
     <script src="script.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="roulette.css">
 
     <script>
         const queryString = window.location.search;
@@ -47,6 +48,11 @@
 
     <div class="flex justify-center items-center">
         <div id="wheel-div" class="hidden m-auto text-center w-[400px] h-[400px] bg-white rounded-lg p-2"></div>
+    </div>
+
+    <div id="roulette" class="hidden">
+        <div id="roulette-container" class="m-auto"></div>
+        <p id="roulette-result" class="text-center font-bold"></p>
     </div>
 
     <!-- COIN FLIP SCRIPT -->
@@ -158,7 +164,7 @@
     </script>
 
     <!-- WHEEL SCRIPT -->
-     <script>
+    <script>
         var items = []
         var spinning = false
         const wheelDiv = document.querySelector("#wheel-div")
@@ -178,7 +184,9 @@
             wheel.overlayImage = pointer
             wheel.spinToItem(itemIndex, wheelDuration, true, 2, 1)
         }
-     </script>
+    </script>
+
+    <script src="roulette.js"></script>
 
     <!-- GENERAL SCRIPT -->
     <script>
@@ -196,7 +204,7 @@
         client.on('message', (channel, tags, message, self) => {
 
             if (message.startsWith('!wheel')) { // !wheel command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" && spinning == false) {
+                if ((tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") && spinning == false) {
                     spinning = true
                     wheelDiv.classList.remove("hidden")
                     items = []
@@ -244,7 +252,7 @@
             }
             
             if (message.startsWith('!vipwheel')) { // !vipwheel command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" && spinning == false) {
+                if ((tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") && spinning == false) {
                     spinning = true
                     items = []
 
@@ -282,7 +290,7 @@
             }
 
             if (message.startsWith('!coinflip')) { // !coinflip command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" && spinning == false) {
+                if ((tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") && spinning == false) {
                     spinning = true
                     $('#coin-div').removeClass('hidden')
 
@@ -292,6 +300,23 @@
                         $('#coin-div').addClass('hidden')
                         spinning = false
                     }, duration + 5000) // keep results on screen for +5 second
+                }
+            }
+            
+            if (message.startsWith('!roulette')) { // !roullete command
+                if ((tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") && spinning == false) {
+                    spinning = true
+
+                    $('#roulette').removeClass('hidden')
+                    
+                    rouletteSpin()
+
+                    setTimeout(() => {
+                        $('#roulette').addClass('hidden')
+                        document.querySelector('#roulette-result').innerHTML = ""
+
+                        spinning = false
+                    }, spinDuration + 3500);
                 }
             }
         });

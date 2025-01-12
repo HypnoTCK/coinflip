@@ -1,3 +1,7 @@
+* {
+    margin: 0;
+}
+
 #coinCanvas {
     width: 300px;
     height: 300px;
