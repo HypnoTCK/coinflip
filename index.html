@@ -24,6 +24,14 @@
 </head>
 
 <body>
+
+    <audio src=""></audio>
+
+    <div id="overlay" class="w-full h-screen absolute bg-zinc-700 bg-opacity-75 rounded-lg hidden">
+        <div id="overlay-text" class="flex flex-col w-full h-screen justify-center items-center"></div>
+        <canvas id="confetti-canvas" class="absolute top-0 left-0 w-full h-screen z-[99999]"></canvas>
+    </div>
+
     <div id="coin-div" class="">
         <div class="flex justify-center items-center p-2">
             <div class="flex flex-col justify-center items-center bg-white rounded-lg w-8/12 max-h-[500px] h-screen items-center">
@@ -50,7 +58,7 @@
         <div id="wheel-div" class="hidden m-auto text-center w-[400px] h-[400px] bg-white rounded-lg p-2"></div>
     </div>
 
-    <div id="roulette" class="hidden">
+    <div id="roulette" class="hidden bg-white w-[80%] m-auto p-2 rounded-lg">
         <div id="roulette-container" class="m-auto"></div>
         <p id="roulette-result" class="text-center font-bold"></p>
     </div>
@@ -168,7 +176,7 @@
         var items = []
         var spinning = false
         const wheelDiv = document.querySelector("#wheel-div")
-        const wheelDuration = 2800;
+        const wheelDuration = 2900;
 
         const props = {
             itemLabelFontSizeMax: 50,
@@ -186,11 +194,11 @@
         }
     </script>
 
-    <script src="roulette.js"></script>
-
     <!-- GENERAL SCRIPT -->
     <script>
         drawCoin()
+
+        const audio = document.querySelector('audio')
 
         const client = new tmi.Client({
             channels: [urlParams.get('streamer')],
@@ -202,7 +210,6 @@
         client.connect();
 
         client.on('message', (channel, tags, message, self) => {
-
             if (message.startsWith('!wheel')) { // !wheel command
                 if ((tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") && spinning == false) {
                     spinning = true
@@ -281,10 +288,47 @@
                     }, wheelDuration + 300)
 
                     setTimeout(() => {
+                        const div = document.createElement('div')
+                        audio.volume = 1
+
+                        if(items[result].label == 'VIP' || items[result].label == 'VIP + Refund'){
+                            div.innerHTML = `
+                                <div class="flex items-center">
+                                    <img src="img/emotes/cheergi.webp">
+                                    <p class="text-5xl font-bold text-white">CONGRATS CHATTER</p>
+                                    <img src="img/emotes/cheergi.webp">
+                                </div>
+                            `
+                            startConfetti();
+                            audio.src = "audio/yay.mp3"
+                            audio.play()
+                            audio.volume = 0.03
+                        }else{
+                            div.innerHTML = `
+                                <img src="img/emotes/booo.webp" class="m-auto">
+
+                                <div class="flex items-center gap-1">
+                                    <p class="text-5xl font-bold text-white">YOU SUCK CHATTER</p>
+                                    <img src="img/emotes/BANGER.webp">
+                                </div>
+                            `
+                            audio.src = "audio/oh_brother.mp3"
+                            audio.play()
+                        }
+
+                        document.querySelector('#overlay-text').appendChild(div)
+                        document.querySelector('#overlay').classList.toggle('hidden')
+                    }, wheelDuration + 1000)
+
+                    setTimeout(() => {
                         wheelDiv.classList.add("hidden")
                         wheelDiv.innerHTML = ""
                         spinning = false
-                    }, wheelDuration + 2000);
+
+                        document.querySelector('#overlay').classList.toggle('hidden')
+                        document.querySelector('#overlay-text').innerHTML = ""
+                        stopConfetti()
+                    }, wheelDuration + 5400);
 
                 }
             }
@@ -327,6 +371,8 @@
         }, 2 * 1000)
         
     </script>
+    <script src="confetti.js"></script>
+    <script src="roulette.js"></script>
 </body>
 
 </html>
