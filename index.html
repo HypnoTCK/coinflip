@@ -5,11 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coin Flip</title>
+
     <script src="//cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="spin-wheel.js"></script>
     <script src="tmi.js"></script>
     <script src="script.js"></script>
+
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="roulette.css">
 
@@ -31,6 +34,12 @@
         <div id="overlay-text" class="flex flex-col w-full h-screen justify-center items-center"></div>
         <canvas id="confetti-canvas" class="absolute top-0 left-0 w-full h-screen z-[99999]"></canvas>
     </div>
+
+    <div id="overlay-yt" class="w-full h-screen absolute bg-zinc-700 bg-opacity-75 rounded-lg hidden">
+        <video id="player"></video>
+    </div>
+
+
 
     <div id="coin-div" class="">
         <div class="flex justify-center items-center p-2">
@@ -194,11 +203,21 @@
         }
     </script>
 
+    <!-- YT SCRIPT -->
+     <script>
+        const player = document.querySelector('#player')
+
+        function get_video_id(input) {
+            return input.match(/(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/user\/\S+|\/ytscreeningroom\?v=|\/sandalsResorts#\w\/\w\/.*\/))([^\/&]{10,12})/)[1]; 
+        }
+     </script>
+
     <!-- GENERAL SCRIPT -->
     <script>
         drawCoin()
 
         const audio = document.querySelector('audio')
+
 
         const client = new tmi.Client({
             channels: [urlParams.get('streamer')],
@@ -363,6 +382,20 @@
                     }, spinDuration + 3500);
                 }
             }
+
+            if (message.startsWith('!yt')) { // !yt command
+                if ((tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") && spinning == false) {
+                    
+                }
+            }
+
+            if (message.startsWith('!weeknd')) { // !weeknd command
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                    audio.src = "audio/weeknd.mp3"
+                    audio.volume = 0.2
+                    audio.play()
+                }
+            }
         });
 
 
@@ -371,6 +404,7 @@
         }, 2 * 1000)
         
     </script>
+
     <script src="confetti.js"></script>
     <script src="roulette.js"></script>
 </body>
