@@ -75,7 +75,7 @@ function rouletteSpin(){
         if(colour == 'black'){
             document.querySelector('#roulette-result').innerHTML = `RESULT: <span style='background-color: ${colour};color: white;padding: 5px'>${colour.toUpperCase()}</span> ${winningSpin} `
         }else{
-            document.querySelector('#roulette-result').innerHTML = `RESULT: <span style='background-color: ${colour};padding: 5px'>${colour.toUpperCase()}</span> ${winningSpin}`
+            document.querySelector('#roulette-result').innerHTML = `RESULT: <span style='background-color: ${colour};color: white;padding: 5px'>${colour.toUpperCase()}</span> ${winningSpin}`
         }
 	}, spinDuration - 500);
 }
