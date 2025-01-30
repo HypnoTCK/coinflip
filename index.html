@@ -392,10 +392,17 @@
             if (message.startsWith('!weeknd')) { // !weeknd command
                 if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
                     audio.src = "audio/weeknd.mp3"
-                    audio.volume = 0.2
+                    audio.volume = 0.5
                     audio.play()
                 }
             }
+
+            if (message.startsWith('!refreshcoin')) { // !weeknd command
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                    window.location.reload()
+                }
+            }
+
         });
 
 
