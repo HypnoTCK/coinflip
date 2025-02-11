@@ -388,9 +388,10 @@
                     
                 }
             }
-
+            
+            const weeknd_perms = ["the_manager23"];
             if (message.startsWith('!weeknd')) { // !weeknd command
-                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck") {
+                if (tags['mod'] || tags['badges']['broadcaster'] || tags['username'].toLowerCase() == "hypnotck" || (weeknd_perms.indexOf(tags['username'].toLowerCase()) > -1)) {
                     audio.src = "audio/weeknd.mp3"
                     audio.volume = 0.5
                     audio.play()
